@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+
+    <!--TWITTER BOOTSTRAP-->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <link rel="icon" href="/static/images/favicon.ico">
+
+    <title>What Happened There?</title>
+
+    <!-- Bootstrap core CSS -->
+    <link href="../static/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
+    <link href="../../assets/css/ie10-viewport-bug-workaround.css" rel="stylesheet">
+
+    <!-- Custom styles for this template -->
+    <link href="starter-template.css" rel="stylesheet">
+
+    <!--NVD3 PLOTTING-->
+    <meta charset="utf-8">
+    <link href="../static/css/nv.d3.css" rel="stylesheet" type="text/css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.2/d3.min.js" charset="utf-8"></script>
+    <script src="../static/js/nv.d3.js"></script>
+
+    <style>
+        text {
+            font: 12px sans-serif;
+        }
+        .spaced {
+            float: left;
+            margin: 10px 0 10px 10px;
+        }
+        .svg-container {
+            display: block;
+            position: static;
+            top: 200px;
+            left: 20px;
+            right: 20px;
+            bottom: 20px;
+        }
+        html, body, svg {
+            margin: 0px;
+            padding: 0px;
+            height: 100%;
+            width: 100%;
+        }
+
+        .nvd3 line.nv-guideline { /* Hide the guideline */
+            display: none;
+            stroke-width: 0.0;
+        }
+
+        .nvd3 .nv-bars rect { /* fix the hover guideline to be snappy */
+            transition: fill-opacity 0ms linear;
+            -moz-transition: fill-opacity 0ms linear;
+            -webkit-transition: fill-opacity 0ms linear;
+        }
+
+        .nvd3 .nv-x .nv-axis .x-axis-tick-mark {
+            stroke: #000; /* black tick marks */
+        }
+
+        .nvd3 .nv-y .nv-axis .tick.zero line {
+            stroke: #000; /* black line for the x axis */
+        }
+
+    </style>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+
+</head>
+
+<body><script type="text/javascript">ANCHORFREE_VERSION="633161526"</script><script type='text/javascript'>(function(){if(typeof(_AF2$runned)!='undefined'&&_AF2$runned==true){return}_AF2$runned=true;_AF2$ = {'SN':'HSSHIELD00US','IP':'172.252.124.104','CH':'','CT':'z234','HST':'','AFH':'hss737','RN':Math.floor(Math.random()*999),'TOP':(parent.location!=document.location||top.location!=document.location)?0:1,'AFVER':'1.4.3','fbw':false,'FBWCNT':0,'FBWCNTNAME':'FBWCNT_CHROME','NOFBWNAME':'NO_FBW_CHROME','B':'c','VER': 'us'};if(_AF2$.TOP==1){document.write("<scr"+"ipt src='http://box.anchorfree.net/insert/insert.php?sn="+_AF2$.SN+"&ch="+_AF2$.CH+"&v="+ANCHORFREE_VERSION+6+"&b="+_AF2$.B+"&ver="+_AF2$.VER+"&afver="+_AF2$.AFVER+"' type='text/javascript'></scr"+"ipt>");}})();</script>
+<!-- class='with-3d-shadow with-transitions'>-->
+
+<!--<button class="spaced" onClick="switchChartStyle('instant')">Bars represents points in time</button>
+<button class="spaced" onClick="switchChartStyle('timespan')">Bars represent spans of time</button>
+<div class="spaced" style="float: left;">(affects the x axis ticks and the bar spacing)</div>-->
+
+<div style="clear: both;"></div>
+
+<nav class="navbar navbar-inverse navbar-fixed-top">
+    <div class="container">
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="/input">What Happened There?</a>
+        </div>
+        <div id="navbar" class="collapse navbar-collapse">
+            <ul class="nav navbar-nav">
+                <li><a href="/input">Home</a></li>
+                <li><a href="http://gobboph.github.io/" target="_blank">About</a></li>
+                <li><a href="/slides">Slides</a></li>
+            </ul>
+        </div><!--/.nav-collapse -->
+    </div>
+</nav>
+
+<br><br>
+
+<div class = "container">
+    <div class="starter-template">
+        <h2>Here is what happened related to {{entities}}</h2>
+        <h4>Want to try something else?</h4>
+    </div>
+
+    <!--<div class = "container">-->
+
+        <form  action="/output" method="GET">
+        <!--<div class="form-group">-->
+        <div class="col-xs-4">
+          <input class="form-control input-lg" type="text" id="entity" name='entity' placeholder="e.g. Barack Obama">
+        </div>
+
+            <div>
+                <button type="submit" class="btn btn-default btn-lg">Let's go!</button>
+            </div>
+        </form>
+    
+</div>
+
+
+    <script src="https://code.jquery.com/jquery-1.10.2.min.js"></script>
+    <script src="static/js/bootstrap.min.js"></script>
+
+    <div class="svg-container" id="sc-one">
+        <svg id="test1" height="450"></svg>
+    </div>
+
+
+
+<div class="container">
+
+    <div class="starter-template">
+        <h3>Results</h3>
+        <h5 class="lead">I found {{the_dates|length}} spikes. These are the starting dates for the spikes I found.</h5>
+        <h5 class="lead">Click on them for more information on what happened, scroll down and click on the same date to close the information window.</h5>
+    </div>
+        
+    <div class="row">
+        <div class="col-sm-2">
+            <table class="table table-hover table-bordered table-inverse">
+                <thead><tr><th><h4>Spike dates</h4></th></tr></thead>
+                {% for date in the_dates %}
+                <tbody>
+                <tr>
+                    <td>
+                        <div onclick='HideShow("{{ date["date"] }}")' style="cursor:pointer">
+                            <h4>{{ date['date'] }}</h4>
+                        </div>
+                    </td>
+                </tr>
+                </tbody>
+                {% endfor %}
+            </table>
+        </div>
+
+
+        
+        
+        <div class="col-sm-10">
+            {% for date in the_dates %}
+            <div class="container" id="{{ date['date'] }}" style="display:none">
+                <div class="row">
+                    <div class="col-sm-6">
+                        <table class="table table-hover">
+                            <tr><th><h4>Top articles for the spike starting at <font color="E62E00">{{date['date']}}</font></h4></th></tr>
+                            {% for word in the_words %}
+                                {% if word['date'] == date['date'] %}
+                                    <tr><td><a href="{{ word['url'] }}" target="_blank" syle="cursor:pointer">
+                                        <h4>{{ word['article'] }}</h4>
+                                    </a></tr></td>
+                                {% endif %}
+                            {% endfor %}
+                        </table>
+                    </div>
+
+                    <div class="col-sm-4">
+                        {{ date['wordcloud']|safe }}
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+
+    </div>
+
+</div>
+
+
+
+<!-- /.container-->
+
+
+<script>
+function HideShow(elem) {
+    var x = document.getElementById(elem);
+    if (x.style.display == 'none') {
+        x.style.display = 'block';
+    } else {
+        x.style.display = 'none';
+    }
+}
+</script>
+
+
+
+<script>
+    
+    var jason = {{the_data|tojson}};
+
+    console.log(jason[0].values[0]);
+
+    var callback = function(data){
+        
+        //console.log(data.values[0]);
+
+        var barTimespan = 60 * 60 * 24;
+        var chart;
+
+        var halfBarXMin = data[0].values[0].x - barTimespan / 2 * 1000;
+        var halfBarXMax = data[0].values[data[0].values.length-1].x + barTimespan / 2 * 1000;
+
+        function renderChart(location){
+            nv.addGraph(function() {
+                chart = nv.models.historicalBarChart();
+                chart
+                    .xScale(d3.time.scale()) // use a time scale instead of plain numbers in order to get nice round default values in the axis
+                    .color(function(d){
+                        for (i=0; i<d.values.length; i++){
+                            return d.values[i].color;
+                        }
+                    })
+                    //.color(['blue','red'])
+                    .forceX([halfBarXMin, halfBarXMax]) // fix half-bar problem on the first and last bars
+                    .useInteractiveGuideline(true) // check out the css that turns the guideline into this nice thing
+                    .margin({"left": 80, "right": 50, "top": 20, "bottom": 50})
+                    .duration(0)
+                ;
+                chart.xAxis
+                    .axisLabel("Time")
+
+                var tickMultiFormat = d3.time.format.multi([
+                    ["%-I:%M%p", function(d) { return d.getMinutes(); }], // not the beginning of the hour
+                    ["%-I%p", function(d) { return d.getHours(); }], // not midnight
+                    ["%b %-d", function(d) { return d.getDate() != 1; }], // not the first of the month
+                    ["%b %-d", function(d) { return d.getMonth(); }], // not Jan 1st
+                    ["%Y", function() { return true; }]
+                ]);
+                chart.xAxis
+                        .showMaxMin(false)
+                        .tickPadding(10)
+                        .tickFormat(function (d) { return tickMultiFormat(new Date(d)); })
+                ;
+
+                chart.yAxis
+                        .showMaxMin(false)
+                        .tickFormat(d3.format(",.0f"))
+                ;
+
+                var svgElem = d3.select(location);
+                svgElem
+                        .datum(data)
+                        .transition()
+                        .call(chart);
+
+                // make our own x-axis tick marks because NVD3 doesn't provide any
+                var tickY2 = chart.yAxis.scale().range()[1];
+                var lineElems = svgElem
+                                .select('.nv-x.nv-axis.nvd3-svg')
+                                .select('.nvd3.nv-wrap.nv-axis')
+                                .select('g')
+                                .selectAll('.tick')
+                                .data(chart.xScale().ticks())
+                                .append('line')
+                                .attr('class', 'x-axis-tick-mark')
+                                .attr('x2', 0)
+                                .attr('y1', tickY2 + 4)
+                                .attr('y2', tickY2)
+                                .attr('stroke-width', 1)
+                        ;
+
+                // set up the tooltip to display full dates
+                var tsFormat = d3.time.format('%b %-d, %Y %I:%M%p');
+                var contentGenerator = chart.interactiveLayer.tooltip.contentGenerator();
+                var tooltip = chart.interactiveLayer.tooltip;
+                tooltip.contentGenerator(function (d) { d.value = d.series[0].data.x; return contentGenerator(d); });
+                tooltip.headerFormatter(function (d) { return tsFormat(new Date(d)); });
+
+                // common stuff for the sections below
+                var xScale = chart.xScale();
+                var xPixelFirstBar = xScale(data[0].values[0].x);
+                var xPixelSecondBar = xScale(data[0].values[0].x + barTimespan * 1000);
+                var barWidth = xPixelSecondBar - xPixelFirstBar; // number of pixels representing time delta per bar
+
+                // fix the bar widths so they don't overlap when there are gaps
+                function fixBarWidths(barSpacingFraction) {
+                    svgElem
+                        .selectAll('.nv-bars')
+                        .selectAll('rect')
+                        .attr('width', (1 - barSpacingFraction) * barWidth)
+                        .attr('transform', function(d, i) {
+                            var deltaX = xScale(data[0].values[i].x) - xPixelFirstBar;
+                            deltaX += barSpacingFraction / 2 * barWidth;
+                            return 'translate(' + deltaX + ', 0)';
+                        })
+                        ;
+                }
+
+                function shiftXAxis() {
+                    var xAxisElem = svgElem.select('.nv-axis.nv-x');
+                    var transform = xAxisElem.attr('transform');
+                    var xShift = -barWidth/2;
+                    transform = transform.replace('0,', xShift + ',');
+                    xAxisElem.attr('transform', transform);
+                }
+
+                if (meaning === 'instant') {
+                    fixBarWidths(0.2);
+                }
+                else if (meaning === 'timespan') {
+                    fixBarWidths(0.0);
+                    shiftXAxis();
+                }
+
+                nv.utils.windowResize(chart.update);
+                return chart;
+            });
+        }
+
+        renderChart('#test1');
+    };
+
+    callback(jason);
+
+    window.setTimeout(function() {
+        window.setTimeout(function() {
+            document.getElementById('sc-one').style.display = 'block';
+            document.getElementById('sc-two').style.display = 'none';
+        }, 0);
+    }, 0);
+
+    function switchChartStyle(style) {
+        if (style === 'instant') {
+            document.getElementById('sc-one').style.display = 'block';
+            document.getElementById('sc-two').style.display = 'none';
+        }
+        else if (style === 'timespan') {
+            document.getElementById('sc-one').style.display = 'none';
+            document.getElementById('sc-two').style.display = 'block';
+        }
+    }
+
+</script>
+
+</body>
+
+</html>
