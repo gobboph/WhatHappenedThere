@@ -14,7 +14,7 @@ from unidecode import unidecode
 import nyt
 from anomalies import find_anom
 
-'''Under here importing things for nlp'''
+'''Under here importing things for nlp (although doing all of this in nyt now, leaving it as an old function uses these packages)'''
 import nltk
 import string
 import os
@@ -23,10 +23,6 @@ from nltk.stem.wordnet import WordNetLemmatizer
 from sklearn.feature_extraction.text import TfidfVectorizer
 from nltk.stem.porter import PorterStemmer
 from nltk.tokenize import RegexpTokenizer
-
-api_key = '0e110f026a334ff2b75999141bc1861d'
-search_url = 'https://api.nytimes.com/svc/search/v2/articlesearch.json'
-archiv_url = 'https://api.nytimes.com/svc/archive/v1/2016/1.json'
 
 
 def download_pageviews(entities=None, start='20150701', end=None, access='desktop', agent='user', limit=10000):
