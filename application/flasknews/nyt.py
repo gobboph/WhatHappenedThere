@@ -48,39 +48,11 @@ def query_from_name(wiki_name, input_name, beg, end):
         :il: list of indices ordered as the index of the most relevant article and downward, as a python list
     '''
 
-
     name = wiki_name.replace('_',' ')
-
-    '''
-    Keeping the commented out text here and down, in case one wants to change to a different query with any of the 
-    words in the wiki_name
-    '''
-#    name_list = preprocess(wiki_name.replace('_', ' '))
-#    name = str(map(str,name_list))
-#    name = name.replace('[', '{').replace(']', '}').replace('\'', '\"')
     
     #connect
     con = None
     con = psycopg2.connect(database = dbname, user = username)
-
-    # query:
-#    sql_query ="""
-#    SELECT main_hl, lead_paragraph, pub_date, all_text, web_url, subsection_name
-#    FROM nyt_archiv_accents
-#    WHERE pub_date>='%s'
-#        AND pub_date<='%s'
-#        AND section_name != 'Briefing'
-#        AND section_name != 'Paid Death Notices'
-#        AND (
-#            SELECT COUNT(DISTINCT word)
-#            FROM
-#                UNNEST(
-#                    '%s'::text[]
-#                ) s(word)
-#            INNER JOIN
-#            REGEXP_SPLIT_TO_TABLE(LOWER(nyt_archiv_accents.all_text), ' ') v (word) using (word)
-#        ) > 0;
-#    """ %(beg, end, name)
 
     # query:
     sql_query ="""
